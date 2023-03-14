@@ -34,7 +34,7 @@ export class App extends Component {
     }; 
 
     this.setState(prevState => ({
-      contacts: [...prevState.contacts, data]
+      contacts: [newUser, ...prevState.contacts, data]
     }));
     Notify.success(`${data.name} is successfully added to your contact list`);
   };
@@ -51,6 +51,7 @@ export class App extends Component {
     this.setState((prevState) => ({
       contacts: prevState.contacts.filter(c => c.id !== id),
     }));
+    Notify.failure(` deleted from your contact list`);
   };
 
   render() {
