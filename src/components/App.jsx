@@ -5,27 +5,37 @@ import { ContactForm } from "./ContactForm/ContactForm";
 import { Filter } from "./Filter/Filter";
 import { ContactList } from "./ContactList/ContactList";
 import { Container } from "./App.styled";
+import { nanoid } from 'nanoid';
 
 export class App extends Component {
   state = {
     contacts: [
-      {name: 'Rosie Simpson', number: '459-12-56'},
-      {name: 'Hermione Kline', number: '443-89-12'},
-      {name: 'Eden Clements', number: '645-17-79'},
-      {name: 'Annie Copeland', number: '227-91-26'},
+    {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
+    {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
+    {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
+    {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
     ],
     filter: "",
   };
 
   takeDataFromSubmitForm = data => {
+     const newUser = {
+     id: nanoid(),
+     name: data.name,
+     number: data.number
+     }
     const existingContact = this.state.contacts.find((element) =>
-      element.name === data.name
+      element.name.toLowerCase() === data.name.toLowerCase()
     );
+
     if(existingContact) {
       window.alert(`${data.name} is already in contacts`);
       return;
     }; 
-    this.setState(prevState => ({contacts: [...prevState.contacts, data]}));
+
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts, data]
+    }));
     Notify.success(`${data.name} is successfully added to your contact list`);
   };
 
@@ -37,13 +47,10 @@ export class App extends Component {
     return this.state.contacts.filter(element => element.name.toLowerCase().includes(this.state.filter));
   };
 
-  deleteContact = (target) => {
-    if(target.nodeName !== 'BUTTON') {
-      return;
-    }
-    const name = target.name;
-    this.setState(prevState => ({contacts: prevState.contacts.filter(contact => contact.name !== name)}));
-    Notify.failure(`${name} is deleted from your contact list`);
+  handleDeleteContact = (id) => {
+    this.setState((prevState) => ({
+      contacts: prevState.contacts.filter(c => c.id !== id),
+    }));
   };
 
   render() {
@@ -59,7 +66,7 @@ export class App extends Component {
             <Filter value={this.state.filter} onChange={this.handleFilterInputChange}/>
             <ContactList
               contacts={visibleContacts} 
-              onDeleteContact={this.deleteContact}>
+              onDeleteContact={this.handleDeleteContact}>
             </ContactList>
           </Container>
         </Section>
